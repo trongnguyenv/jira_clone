@@ -1,0 +1,50 @@
+version: "3.9"
+services:
+  jira_api:
+    image: "api"
+    contaner_name: "jira_api"
+    restart: always
+    ports:
+      - "8080:8080"
+    links:
+      - pg_db:pg_db
+    depends_on:
+      - mysql
+
+  jira_client:
+    image: "client"
+    contaner_name: "jira_client"
+    restart: always
+    ports:
+      - "3000:3000"
+  
+  mysql:
+    platform: linux/x86_64
+    image: mysql:5.7
+    container_name: mysql-nodejs
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: nodejs
+    ports:
+     - "3308:3306"  
+    volumes:
+    # Mysql
+    - db:/var/lib/mysql
+    networks: 
+      - nodejss
+
+  # pg_db:
+  #   container_name: pg_db
+  #   image: "postgres:9.6.17"
+  #   restart: always
+  #   environment:
+  #     POSTGRES_USER: jira_user
+  #     POSTGRES_PASSWORD: jira_password
+  #     POSTGRES_MULTIPLE_DATABASES: jira_db,jira_test
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - ./scripts:/docker-entrypoint-initdb.d
+  #     - database-data:/var/lib/postgresql/data/
+     
